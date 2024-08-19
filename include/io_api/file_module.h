@@ -17,7 +17,7 @@ namespace io_api
         str.erase(str.begin(), str.begin() + i - 1);
     }
 
-    // str[out] - ñòðîêà
+    // str[out] - ˜˜˜˜˜˜
     inline bool get_next_not_empty_line(std::ifstream& ifile, std::string& str)
     {
         str = "";
@@ -45,6 +45,72 @@ namespace io_api
         return std::string(str, end);
     }
 
+    inline int read_file(const char* file, uint32_t byte_size, void* data)
+    {
+        FILE* f;
+        f = fopen(file, "rb");
+
+        if (!f)
+        {
+            printf("%s not opened\n", file);
+            return 1;
+        }
+
+        fread(data, 1, byte_size, f);
+        fclose(f);        
+        return 0;
+    }
+
+    inline int write_file(const char* file, uint32_t byte_size, const void* data)
+    {
+        FILE* f;
+        f = fopen(file, "wb");
+
+        if (!f)
+        {
+            printf("%s not opened\n", file);
+            return 1;
+        }
+
+        fwrite(data, 1, byte_size, f);
+        fclose(f);        
+        return 0;
+    }
+
+    uint32_t get_file_size(const char* file)
+    {		
+        int64_t size = 0;
+
+        FILE* f = fopen(file, "rb");        
+
+        if (!f) 
+        {
+            printf("Opening file error"); 		
+            return 0; 
+        }
+        if (fseek(f, 0, SEEK_END) == 0)
+        {
+            size = ftell(f);
+        }
+        if (size < 0) 
+        {
+            printf("ftell() error."); 
+            fclose(f);
+            return 0;
+        }
+        if (!size) 
+        {
+            printf("File is empty"); 
+        }
+        if (size > INT32_MAX) 
+        { 
+            printf("Need less file size: < %db", INT32_MAX); 
+        }
+
+        fclose(f);
+        //printf("size=%d B\n", size);
+        return (uint32_t)size;
+    }
 }
 
 #endif // !FILE_MODULE_H
