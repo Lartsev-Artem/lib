@@ -1,5 +1,6 @@
 
 #include "ring_buffer.h"
+#include <iostream>
 typedef uint8_t Type;
 int main()
 {

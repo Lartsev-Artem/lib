@@ -2,6 +2,7 @@
 #define FILE_MODULE_H
 
 #include <string>
+#include <fstream>
 
 namespace io_api
 {
@@ -17,7 +18,7 @@ namespace io_api
         str.erase(str.begin(), str.begin() + i - 1);
     }
 
-    // str[out] - ˜˜˜˜˜˜
+    // str[out] - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     inline bool get_next_not_empty_line(std::ifstream& ifile, std::string& str)
     {
         str = "";
@@ -77,7 +78,7 @@ namespace io_api
         return 0;
     }
 
-    uint32_t get_file_size(const char* file)
+    inline uint32_t get_file_size(const char* file)
     {		
         int64_t size = 0;
 

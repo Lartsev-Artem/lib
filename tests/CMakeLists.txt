@@ -4,17 +4,20 @@ cmake_minimum_required(VERSION 3.6)
 
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/build)
 
+include(${CMAKE_CURRENT_LIST_DIR}/../cmake_module/cmake_files.cmake)  # функции cmake 
+
 include_directories(
     ${CMAKE_CURRENT_LIST_DIR}
     ${CMAKE_CURRENT_LIST_DIR}/../include    
     )
 
+get_all_files(${CMAKE_CURRENT_LIST_DIR}/../src/math/optimization/evolution/*.cpp EVOLUTION_SRC)
+
 set(${PROJECT_NAME}_LIB_SRC 
-    ${CMAKE_CURRENT_LIST_DIR}/../src/io_api/header_rebuilder.cpp
-     
+    ${CMAKE_CURRENT_LIST_DIR}/../src/io_api/header_rebuilder.cpp 
+    ${EVOLUTION_SRC}
     )
 
-include(${CMAKE_CURRENT_LIST_DIR}/../cmake_module/cmake_files.cmake)  # функции cmake 
 
 get_all_files(${CMAKE_CURRENT_SOURCE_DIR}/*.cpp ${PROJECT_NAME}_EXE_SRC)
 

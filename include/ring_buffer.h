@@ -54,9 +54,9 @@ int main()
 */
 
 #include<stdint.h>
-#include <memory>
+#include <memory.h>
 
-#include <iostream>
+#include <string>
 #include <exception>
 
 namespace ring_buffer

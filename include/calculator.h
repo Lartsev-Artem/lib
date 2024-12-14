@@ -22,6 +22,7 @@ int main()
 
 #include <map>
 #include <cstring>
+#include <stdint.h>
 
 #define MAX_LENGHTH_VAR_NAME 80
 

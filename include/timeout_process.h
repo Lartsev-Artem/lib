@@ -35,6 +35,7 @@ int main()
 #include <functional>
 #include <mutex>
 #include <thread>
+#include <atomic>
 
 #include <iostream>
 #include <exception>
@@ -55,6 +56,21 @@ namespace timeout_proc
 		e_err_overflow,		///< превышено максимальное число процессов
 		e_err_id_exist,		///< идентификатор процееса уже используется
 	};
+
+    // Define a new exception class
+    class TimeOutExсeption : public std::exception {
+    private:
+        std::string _message;
+
+    public:
+        TimeOutExсeption(const char* msg) : _message(msg) {}
+
+        // Override the what() method to return our message
+        const char* what() const throw()
+        {
+            return _message.c_str();
+        }
+    };
 
 	/**
 	 * @brief Класс организует вызов функций с заданой периодичностью
@@ -179,20 +195,7 @@ namespace timeout_proc
 	};
 
 
-	// Define a new exception class
-	class TimeOutExсeption : public std::exception {
-	private:
-		std::string _message;
 
-	public:
-		TimeOutExсeption(const char* msg) : _message(msg) {}
-
-		// Override the what() method to return our message 
-		const char* what() const throw()
-		{
-			return _message.c_str();
-		}
-	};
 }//namespace TimeOut
 
 #endif //TIMEOUT_PROCESS_H
