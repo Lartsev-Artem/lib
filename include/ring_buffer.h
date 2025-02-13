@@ -12,46 +12,46 @@
 #ifndef RING_BUFFER_H
 #define RING_BUFFER_H
 
-/* Example
+ /* Example
 
-#include "ring_buffer.h"
-typedef uint8_t Type;
-int main()
-{
-	Type data[10] = { 0,1,2,3,4,5,6,7,8,9 };
+ #include "ring_buffer.h"
+ typedef uint8_t Type;
+ int main()
+ {
+	 Type data[10] = { 0,1,2,3,4,5,6,7,8,9 };
 
-	ring_buffer::RingBuffer<Type>* buf = new ring_buffer::RingBuffer<Type>;
-	buf->init(5);
-	buf->print_hex("init: ");
+	 ring_buffer::RingBuffer<Type>* buf = new ring_buffer::RingBuffer<Type>;
+	 buf->init(5);
+	 buf->print_hex("init: ");
 
-	buf->put(-1);
-	buf->put(-2);
-	buf->put(data, 2);
-	buf->print_hex("add -1, -2, 0, 1: ");
-	buf->put(data+5, 1);
-	buf->print_hex("add 5: ");
+	 buf->put(-1);
+	 buf->put(-2);
+	 buf->put(data, 2);
+	 buf->print_hex("add -1, -2, 0, 1: ");
+	 buf->put(data+5, 1);
+	 buf->print_hex("add 5: ");
 
-	Type a[5];
-	buf->get(a); printf("get= %d\n", a[0]);
-	buf->pop(a, 3); printf("pop= %d, %d ,%d\n", a[0], a[1], a[2]);
+	 Type a[5];
+	 buf->get(a); printf("get= %d\n", a[0]);
+	 buf->pop(a, 3); printf("pop= %d, %d ,%d\n", a[0], a[1], a[2]);
 
-	buf->put(data + 6, 3);
-	buf->print_hex("pop -1,-2,0. add 6,7,8: ");
+	 buf->put(data + 6, 3);
+	 buf->print_hex("pop -1,-2,0. add 6,7,8: ");
 
-	uint32_t n = buf->size(); printf("size= %d\n",n);
-	try
-	{
-		buf->put(data, (5 - n) + 1);
-	}
-	catch (const ring_buffer::OverflowException& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
+	 uint32_t n = buf->size(); printf("size= %d\n",n);
+	 try
+	 {
+		 buf->put(data, (5 - n) + 1);
+	 }
+	 catch (const ring_buffer::OverflowException& e)
+	 {
+		 std::cerr << e.what() << '\n';
+	 }
 
-	delete buf;
-	return 0;
-}
-*/
+	 delete buf;
+	 return 0;
+ }
+ */
 
 #include<stdint.h>
 #include <memory.h>
@@ -59,8 +59,11 @@ int main()
 #include <string>
 #include <exception>
 
+#ifdef __cplusplus
+
 namespace ring_buffer
 {
+
 	// Define a new exception class
 	class OverflowException : public std::exception {
 	public:
@@ -75,15 +78,17 @@ namespace ring_buffer
 	{
 	public:
 
-		RingBuffer() :m_capacity(0), m_size(0), w_ptr(0), r_ptr(0), m_buf(nullptr) {}
-		~RingBuffer() { clear(); }
+		RingBuffer() : m_capacity(0), m_size(0), w_ptr(0), r_ptr(0), m_buf(nullptr), m_raw_mem(nullptr) {}
+		~RingBuffer()
+		{
+			clear();
+		}
 
 		/**
 		 * @brief Инициализация буфера, Выделение памяти
-		 *
 		 * @param N размер буфера
 		 */
-		void init(uint32_t N)
+		void init(uint32_t N, uint32_t aligment)
 		{
 			if (m_capacity)
 			{
@@ -92,16 +97,28 @@ namespace ring_buffer
 
 			w_ptr = r_ptr = m_size = 0;
 			m_capacity = N;
-			m_buf = new _T[N];
-			memset(m_buf, 0, N * sizeof(_T));
+
+			if (N)
+			{
+				m_raw_mem = (_T*)malloc((N + aligment - 1) * sizeof(_T));
+				m_buf = (_T*)(((uint8_t*)m_raw_mem) + ((aligment - ((uint32_t)m_raw_mem)) % aligment));
+				memset(m_buf, 0, N * sizeof(_T));
+			}
+		}
+
+		//! @brief очистка буфера
+		void reset()
+		{
+			w_ptr = r_ptr = m_size = 0;
 		}
 
 		//! @brief очистка памяти буфера
 		void clear()
 		{
-			if (m_buf != nullptr)
+			if (m_raw_mem != nullptr)
 			{
-				delete[] m_buf;
+				free(m_raw_mem);
+				m_raw_mem = nullptr;
 				m_buf = nullptr;
 				m_capacity = w_ptr = r_ptr = m_size = 0;
 			}
@@ -139,9 +156,11 @@ namespace ring_buffer
 					memcpy(m_buf + w_ptr, data, n * sizeof(_T));
 					memcpy(m_buf, data + n, (in_size - n) * sizeof(_T));
 				}
+
 				w_ptr = (w_ptr + in_size) % m_capacity;
 				m_size += in_size;
 			}
+
 			return 0;
 		}
 
@@ -155,6 +174,7 @@ namespace ring_buffer
 			{
 				throw OverflowException("Buffer overflow!!!");
 			}
+
 			m_buf[w_ptr] = val;
 			w_ptr = (w_ptr + 1) % m_capacity;
 			m_size++;
@@ -169,7 +189,7 @@ namespace ring_buffer
 		 * @param[in] out_size максимальное число забираемых эл-в
 		 * @return число реально забранных элементов
 		 */
-		int get(_T* data, uint32_t out_size) const
+		uint32_t get(_T* data, uint32_t out_size) const
 		{
 			if (m_size == 0)
 			{
@@ -191,6 +211,7 @@ namespace ring_buffer
 				memcpy(data, m_buf + r_ptr, n * sizeof(_T));
 				memcpy(data + n, m_buf, (out_size - n) * sizeof(_T));
 			}
+
 			return out_size;
 		}
 
@@ -199,12 +220,13 @@ namespace ring_buffer
 		 * @param[out] val данные
 		 * @return число забранных элементов
 		 */
-		int get(_T* val) const
+		uint32_t get(_T* val) const
 		{
 			if (m_size == 0)
 			{
 				return 0;
 			}
+
 			*val = m_buf[r_ptr];
 			return 1;
 		}
@@ -217,7 +239,7 @@ namespace ring_buffer
 		 * @param[in] out_size максимальное число забираемых эл-в
 		 * @return число реально забранных элементов
 		 */
-		int pop(_T* data, uint32_t out_size)
+		uint32_t pop(_T* data, uint32_t out_size)
 		{
 			if (m_size == 0)
 			{
@@ -239,6 +261,7 @@ namespace ring_buffer
 				memcpy(data, m_buf + r_ptr, n * sizeof(_T));
 				memcpy(data + n, m_buf, (out_size - n) * sizeof(_T));
 			}
+
 			r_ptr = (r_ptr + out_size) % m_capacity;
 			m_size -= out_size;
 			return out_size;
@@ -249,7 +272,7 @@ namespace ring_buffer
 		 * @param[out] val данные
 		 * @return число забранных элементов
 		 */
-		int pop(const _T* val)
+		uint32_t pop(const _T* val)
 		{
 			if (m_size == 0)
 			{
@@ -270,14 +293,15 @@ namespace ring_buffer
 		 * @param[in] size число элементов для копирования
 		 * @return число скопированных элементов
 		 */
-		int copy(RingBuffer* src, uint32_t size)
+		uint32_t copy(RingBuffer* src, uint32_t size)
 		{
 			if (!size)
 			{
 				return 0;
 			}
 
-			int N = src->size();
+			uint32_t N = src->size();
+
 			if (size > N)
 			{
 				size = N;
@@ -297,29 +321,63 @@ namespace ring_buffer
 			{
 				N = m_size;
 			}
+
 			r_ptr = (r_ptr + N) % m_capacity;
 			m_size -= N;
 		}
 
-		inline uint32_t size() const
+		uint32_t size() const
 		{
 			return m_size;
 		}
 
-		// печать всего буфера
-		void print_hex(const char* msg="") const
+		//! @brief сдвинуть указатель конца данных на in_size
+		void update_wptr(uint32_t in_size)
 		{
-			printf("%s", msg);						
-			for (uint32_t i = 0; i < m_capacity * sizeof(_T); i++)
-			{
-				printf("0x%02x ", ((uint8_t*)m_buf)[i]);
-			}
-			printf("\n");
+			w_ptr = (w_ptr + in_size) % m_capacity;
+			m_size += in_size;
 		}
+
+		//! @brief Получить указатель на начало свободного места в буфере
+		//! @param N[out] - кол-во доступных для записи элементов до перехода через конец
+		_T* get_free_linear_data(uint32_t& N) const
+		{
+			if (w_ptr >= r_ptr)
+			{
+				N = m_capacity - w_ptr;
+			}
+			else
+			{
+				N = r_ptr - w_ptr;
+			}
+
+			return m_buf + w_ptr;
+		}
+
+		//! @brief указатель на данные (без учета наполнения буфера)
+		_T* data() const
+		{
+			return m_buf;
+		}
+
+
+#if 1
+		// печать всего буфера
+		void print_hex(const char* msg = "") const
+		{
+			printf("%s\n", msg);
+
+			for (uint32_t i = 0; i < m_capacity; i++)
+			{
+				printf("0x%x, ", m_buf[i]);
+			}
+		}
+#endif
 
 	private:
 		RingBuffer(const RingBuffer<_T>&); // No copy constructor
 
+		_T* m_raw_mem;			///< невыровненная память
 		_T* m_buf;				///< данные
 		uint32_t m_size;		///< число эл-в в буфере
 		uint32_t m_capacity;	///< общий размер выделенной памяти под буфер
@@ -327,5 +385,8 @@ namespace ring_buffer
 		uint32_t w_ptr;			///< указатель на место записи
 	};
 
-} // namespace ring_buffer
+}
+
+#endif //__cplusplus
+
 #endif // RING_BUFFER_H

@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <vector>
+#include <algorithm>
 
 typedef double Type;
 typedef uint32_t BitsType;

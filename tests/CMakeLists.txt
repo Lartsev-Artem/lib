@@ -4,25 +4,35 @@ cmake_minimum_required(VERSION 3.6)
 
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/build)
 
-include(${CMAKE_CURRENT_LIST_DIR}/../cmake_module/cmake_files.cmake)  # функции cmake 
+include(${CMAKE_CURRENT_LIST_DIR}/../cmake_module/cmake_files.cmake)  # С„СѓРЅРєС†РёРё cmake 
 
 include_directories(
     ${CMAKE_CURRENT_LIST_DIR}
-    ${CMAKE_CURRENT_LIST_DIR}/../include    
+    ${CMAKE_CURRENT_LIST_DIR}/../include
+    ${CMAKE_CURRENT_LIST_DIR}/../include/audio/compressor
+    ${CMAKE_CURRENT_LIST_DIR}/include/math/optimization/evolution
+    ${CMAKE_CURRENT_LIST_DIR}/include/math/
+    ${CMAKE_CURRENT_LIST_DIR}/../include/audio/compressor
+    ${CMAKE_CURRENT_LIST_DIR}/../include/math/convex_hull
     )
 
-get_all_files(${CMAKE_CURRENT_LIST_DIR}/../src/math/optimization/evolution/*.cpp EVOLUTION_SRC)
+get_all_files(${CMAKE_CURRENT_LIST_DIR}/../src/math/optimization/evolution/*.cpp ${PROJECT_NAME}_EVOLUTION_SRC)
+get_all_files(${CMAKE_CURRENT_LIST_DIR}/../src/audio/compressor/*.cpp ${PROJECT_NAME}_COMPRESSOR_SRC)
+get_all_files(${CMAKE_CURRENT_LIST_DIR}/../src/math/*.cpp ${PROJECT_NAME}_MATH_SRC)
 
 set(${PROJECT_NAME}_LIB_SRC 
     ${CMAKE_CURRENT_LIST_DIR}/../src/io_api/header_rebuilder.cpp 
-    ${EVOLUTION_SRC}
+    ${CMAKE_CURRENT_LIST_DIR}/../src/io_api/file_module.cpp
+    ${${PROJECT_NAME}_EVOLUTION_SRC}
+    ${${PROJECT_NAME}_COMPRESSOR_SRC}
+    ${${PROJECT_NAME}_MATH_SRC}
     )
 
 
 get_all_files(${CMAKE_CURRENT_SOURCE_DIR}/*.cpp ${PROJECT_NAME}_EXE_SRC)
 
 foreach(sub_prog ${${PROJECT_NAME}_EXE_SRC})
-        get_filename_component(name ${sub_prog}  NAME_WLE) #имя файла без пути и без разширения
+        get_filename_component(name ${sub_prog}  NAME_WLE) #РёРјСЏ С„Р°Р№Р»Р° Р±РµР· РїСѓС‚Рё Рё Р±РµР· СЂР°Р·С€РёСЂРµРЅРёСЏ
         add_executable(${name} ${${PROJECT_NAME}_LIB_SRC} ${sub_prog})                
 endforeach()
 

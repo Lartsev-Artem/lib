@@ -46,7 +46,7 @@ void GeneticEngine::SetMutateCond(mutation_type_t mutationType, Type mutation_pr
 	_mutate_state.max_mutate_gens = max_mutate_gens;
 	_mutate_state.invers_probability = invers_probability;
 }
-void GeneticEngine::SetCrossCond(ñrossing_type_t crossingType, Type cross_probability)
+void GeneticEngine::SetCrossCond(crossing_type_t crossingType, Type cross_probability)
 {
 	_crossingType = crossingType;
 	_cross_probability = cross_probability;

@@ -7,7 +7,7 @@ int main()
 	Type data[10] = { 0,1,2,3,4,5,6,7,8,9 };
 
 	ring_buffer::RingBuffer<Type>* buf = new ring_buffer::RingBuffer<Type>;
-	buf->init(5);
+	buf->init(5,4);
 	buf->print_hex("init: ");
 
 	buf->put(-1);

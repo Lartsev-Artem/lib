@@ -6,6 +6,7 @@
 #include <numeric>
 #include <functional>
 #include <limits>
+#include <math.h>
 
 /*
 * Класс ClasterEngine должен иметь метод: T Distance(const ObjType&) const

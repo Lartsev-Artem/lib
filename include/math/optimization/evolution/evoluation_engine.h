@@ -15,7 +15,7 @@ typedef enum CrossingType
 	eCross_TWO_POINT_RECOMBINATION,
 	eCross_ELEMENTWISE_RECOMBINATION,
 	eCross_ONE_ELEMENT_EXCHANGE
-}сrossing_type_t;
+}crossing_type_t;
 
 typedef enum MutationType
 {
@@ -34,7 +34,7 @@ private:
 
 	selection_type_t _selectionType;	//Тип Селекции
 
-	сrossing_type_t _crossingType;		//Тип Скрещивания
+    crossing_type_t _crossingType;		//Тип Скрещивания
 	Type _cross_probability;			// вероятность скрещивания
 
 	struct mutate_set
@@ -69,7 +69,7 @@ public:
 
 	void SetSelectCond(const selection_type_t selectionType = eSelTupe_RouletteWheel);
 	void SetMutateCond(mutation_type_t mutationType = eMutation_BitFlip, Type mutation_probability = 0.1, Type invers_probability = 0.01, int max_mutate_gens = 3);
-	void SetCrossCond(сrossing_type_t crossingType = eCross_ONE_POINT_RECOMBINATION, Type cross_probability = 0.9);
+    void SetCrossCond(crossing_type_t crossingType = eCross_ONE_POINT_RECOMBINATION, Type cross_probability = 0.9);
 
 private:
 	void BornPopulation();

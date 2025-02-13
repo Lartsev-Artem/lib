@@ -13,7 +13,7 @@ int main()
 		return 1;
 	}	
 	std::cout << "\npress ESC to exit.\n";
-	std::cout << "\press v to print vars list.\n\n";
+    std::cout << "\npress v to print vars list.\n\n";
 
 	Calculator<int> icalc;
 	Calculator<double> dcalc;
