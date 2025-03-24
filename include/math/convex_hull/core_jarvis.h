@@ -30,11 +30,12 @@ public:
 		std::swap(fvect[0], fvect.back());		  // начальную точку в конец
 		int k = 0;                                // счетчик для определения правово поворота
 
+		uint32_t size = fvect.size();
 		do
 		{
 			k = 0;
 
-			for (int i = 0; i < fvect.size(); ++i)
+			for (int i = 0; i < size; ++i)
 			{
 				if (HullCore<TYPE>::Rotate(HullCore<TYPE>::hull.back(), fvect[k], fvect[i]) > 0) // наименьший поворот относительно последней точки оболочки
 				{
@@ -42,14 +43,17 @@ public:
 				}
 			}
 
-			if (!(fvect[k] != HullCore<TYPE>::hull.front()))
+			if (fvect[k] == HullCore<TYPE>::hull.front())
 			{
 				break;    // если начало равно текущей, то оболчка построена
 			}
 			else
 			{
 				HullCore<TYPE>::hull.push_back(fvect[k]);                      //добавить найденный эл-т
-				fvect.erase(fvect.begin() + k);                 // удалить этот эл-т из исходного массива
+				//fvect.erase(fvect.begin() + k);					// удалить этот эл-т из исходного массива
+				
+				std::swap(fvect[k], fvect[size-1]);
+				--size;				
 			}
 		}
 		while (true);
