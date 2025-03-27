@@ -3,11 +3,13 @@
 
 #include <stdint.h>
 
-#define IF_NO_BRANCH(cond, a,b, res)\
-{\
-    uint32_t reg = (cond) - 1;\
-    res = ((((uint32_t)(a)) & (~reg)) + ((b) & reg));\
-}
+//out = cond ? res1 : res2
+#define IF_NO_BRUNCH(_cond, res1, res2) \
+	(( (res1) & (~((uint32_t)((_cond) - 1)))) + ((res2) & ((uint32_t)((_cond) - 1))))
+
+
+//out = cond ? val : 0
+#define GET_IF_TRUE(cond, val) ((val)&(~((cond)-1)))
 
 uint8_t countBits8 (uint8_t a);
 uint8_t countBits16 (uint16_t a);
@@ -44,5 +46,8 @@ uint32_t _sqrt32(uint32_t value);
 
 ///! sqrt(a^2+b^2)
 uint32_t sqrt_4375(uint32_t d1, uint32_t d2);
+
+///! sqrt(a^2-b^2)
+int64_t sqrt_dif(const int64_t a, const int64_t b, const int num_of_iter);
 
 #endif //BITMATH_H
