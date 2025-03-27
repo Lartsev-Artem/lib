@@ -2,6 +2,8 @@
 
 #include "macro.h"
 
+#include <assert.h>
+
 #define USE_ASM 0
 #define PL_ADDRESS_SIZE 32
 
@@ -330,7 +332,7 @@ float _log2f(float x)
 	return (x - 1.0f) * LOG2E + exp;
 }
 
-uint32_t _log2(uint32_t a)
+uint32_t _log2u(uint32_t a)
 {
 	return 31 - countLeadZeroBits32(a);
 }
@@ -341,7 +343,7 @@ uint32_t _log2(uint32_t a)
  * @param bits --- число учитываемых младших бит
  * @return (2^bits)*log2(val)
  */
-uint32_t _log2(uint32_t val, uint32_t bits)
+uint32_t _log2u(uint32_t val, uint32_t bits)
 {
 	uint32_t n = 31 - countLeadZeroBits32(val); //целая часть
 
@@ -430,26 +432,17 @@ uint32_t _sqrt32(uint32_t value)
 // sqrt(a^2+b^2)
 uint32_t sqrt_4375(uint32_t d1, uint32_t d2)
 {
-	d1 = (~((d1 >> 31) - 1)) ^ d1;
-	d2 = (~((d2 >> 31) - 1)) ^ d2;
+	d1 ^= (~((d1 >> 31) - 1));
+	d2 ^= (~((d2 >> 31) - 1));
 
-	if (d1 == d2)
-	{
-		return d1 + (d1 >> 1) - (d1 >> 4);
-	}
-	else
-	{
-		if (d1 < d2)
-		{
-			uint32_t d;
-			d = d1;
-			d1 = d2;
-			d2 = d;
-		}
+	uint32_t cond = -(d1 < d2);
+	uint32_t tmp = (d1 ^ d2);
 
-		d2 = (d2 * d2) / d1;
-		return d1 + (d2 >> 1) - (d2 >> 4);
-	}
+	d2 = (d1 ^ (tmp & cond));
+	d1 = (d1 ^ (tmp & (~cond)));
+
+	d1 = (d1 * d1) / (d2 + (d2 == 0));
+	return d2 + (d1 >> 1) - (d1 >> 4);
 
 	/*unsigned int max, min, mn;
 	d1 = abs32(d1);
@@ -473,4 +466,19 @@ uint32_t sqrt_4375(uint32_t d1, uint32_t d2)
 
 	mn = min * min / max;
 	return max + (mn >> 1) - (mn >> 4);*/
+}
+
+// sqrt(a^2-b^2)
+int64_t sqrt_dif(const int64_t a, const int64_t b, const int num_of_iter)
+{
+	assert(b <= a);
+
+	const int64_t y = b * b - a * a;
+	int64_t S1 = a - (b * b + a) / (a << 1);
+
+	for (int i = 0; i < 0; i++)
+	{
+		S1 -= (S1 * S1 + y) / (S1 << 1);
+	}
+	return S1;
 }
