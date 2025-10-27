@@ -16,6 +16,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/cmake_module/cmake_files.cmake)  # функции cma
 
 include_directories(
     ${CMAKE_CURRENT_LIST_DIR}/include
+    ${CMAKE_CURRENT_LIST_DIR}/include/common
     ${CMAKE_CURRENT_LIST_DIR}/include/math
     ${CMAKE_CURRENT_LIST_DIR}/include/io_api
     ${CMAKE_CURRENT_LIST_DIR}/include/math/optimization/evolution
@@ -24,20 +25,23 @@ include_directories(
     ${CMAKE_CURRENT_LIST_DIR}/include/audio/compressor
     ${CMAKE_CURRENT_LIST_DIR}/include/math/convex_hull
     ${CMAKE_CURRENT_LIST_DIR}/include/math/trees
+    ${CMAKE_CURRENT_LIST_DIR}/include/block_coding/reed_solomon
     )
 
 
 
-get_all_files(${CMAKE_CURRENT_LIST_DIR}/src/math/optimization/evolution/*.cpp ${PROJECT_NAME}_EVOLUTION_SRC)
+get_all_files(${CMAKE_CURRENT_LIST_DIR}/src/math/optimization/evolution/*.cpp ${PROJECT_NAME}_EVOLUTION_SRC) 
 get_all_files(${CMAKE_CURRENT_LIST_DIR}/src/audio/compressor/*.cpp ${PROJECT_NAME}_COMPRESSOR_SRC)
 get_all_files(${CMAKE_CURRENT_LIST_DIR}/src/math/*.cpp ${PROJECT_NAME}_MATH_SRC)
-
+get_all_files(${CMAKE_CURRENT_LIST_DIR}/src/block_coding/*.cpp ${PROJECT_NAME}_BLOCK_CODING_SRC)
+ 
 set(${PROJECT_NAME}_SRC
      ${CMAKE_CURRENT_LIST_DIR}/src/io_api/header_rebuilder.cpp
      ${CMAKE_CURRENT_LIST_DIR}/src/io_api/file_module.cpp
      ${${PROJECT_NAME}_MATH_SRC}
      ${${PROJECT_NAME}_COMPRESSOR_SRC}
      ${${PROJECT_NAME}_EVOLUTION_SRC}
+     ${${PROJECT_NAME}_BLOCK_CODING_SRC}
     )
 
 #add_executable(${PROJECT_NAME} ${${PROJECT_NAME}_SRC} )

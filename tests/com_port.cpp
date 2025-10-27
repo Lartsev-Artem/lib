@@ -5,8 +5,11 @@ int main(int argc, char** argv)
 {
     const char* port_name = argc > 1 ? argv[1] : "COM1";
 
-	comm_port::SerialPort<void> port(comm_port::e_rate_9600, 8, comm_port::e_no_parity, comm_port::e_ones_stopbit);    
-    port.comm_open(port_name, 100, 0);
+    comm_port::SerialPort<void> port(comm_port::e_rate_9600, 8, comm_port::e_no_parity, comm_port::e_ones_stopbit);
+    if (port.comm_open(port_name, 100, 0) < 0)
+    {
+        return 0;
+    }
 
     char send[64];
     sprintf(send,"Hello world from %s\r\n",port_name);

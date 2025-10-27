@@ -288,12 +288,12 @@ uint32_t _abs32(int32_t a)
 	return ((uint32_t)a + mask) ^ mask;
 }
 
-int32_t _max(int32_t a, int32_t b)
+int32_t _max32(int32_t a, int32_t b)
 {
 	return a ^ ((a ^ b) & -(a< b)); //max
 }
 
-int32_t _min(int32_t a, int32_t b)
+int32_t _min32(int32_t a, int32_t b)
 {
 	return a ^ ((a ^ b) & -(a > b)); //min
 }

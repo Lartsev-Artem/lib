@@ -9,7 +9,7 @@
 
 class Welzl
 {
-public:
+public:    
     using type_welzl = float;
     static constexpr type_welzl epsilon = 1e-9f;
 
@@ -37,7 +37,7 @@ public:
      *
      * @note Точки должны иметь случайный порядок для оптимальной работы алгоритма
      */
-    void welzl_proc(const Point* m_points, uint32_t size);
+    void welzl_proc(const Point* m_points, uint32_t size);    
     Circle get_circle() { return m_circle; }
 
 private:

@@ -15,11 +15,14 @@ include_directories(
     ${CMAKE_CURRENT_LIST_DIR}/include/math/
     ${CMAKE_CURRENT_LIST_DIR}/../include/audio/compressor
     ${CMAKE_CURRENT_LIST_DIR}/../include/math/convex_hull
+    ${CMAKE_CURRENT_LIST_DIR}/../include/common
+    ${CMAKE_CURRENT_LIST_DIR}/include/block_coding/reed_solomon
     )
 
 get_all_files(${CMAKE_CURRENT_LIST_DIR}/../src/math/optimization/evolution/*.cpp ${PROJECT_NAME}_EVOLUTION_SRC)
 get_all_files(${CMAKE_CURRENT_LIST_DIR}/../src/audio/compressor/*.cpp ${PROJECT_NAME}_COMPRESSOR_SRC)
 get_all_files(${CMAKE_CURRENT_LIST_DIR}/../src/math/*.cpp ${PROJECT_NAME}_MATH_SRC)
+get_all_files(${CMAKE_CURRENT_LIST_DIR}/../src/block_coding/*.cpp ${PROJECT_NAME}_BLOCK_CODING_SRC)
 
 set(${PROJECT_NAME}_LIB_SRC 
     ${CMAKE_CURRENT_LIST_DIR}/../src/io_api/header_rebuilder.cpp 
@@ -27,6 +30,7 @@ set(${PROJECT_NAME}_LIB_SRC
     ${${PROJECT_NAME}_EVOLUTION_SRC}
     ${${PROJECT_NAME}_COMPRESSOR_SRC}
     ${${PROJECT_NAME}_MATH_SRC}
+    ${${PROJECT_NAME}_BLOCK_CODING_SRC}
     )
 
 

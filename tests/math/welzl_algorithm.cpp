@@ -1,4 +1,4 @@
-  //Test  Random points cloud. + Matlab code
+﻿  //Test  Random points cloud. + Matlab code
 
 #include "welzl_algorithm.h"
 
@@ -12,8 +12,8 @@ int main() {
     std::cout << "points = [";
     for (size_t i = 0; i < N; i++)
     {
-        points[i].x = ((double)(rand() % 10000))/100;
-        points[i].y = ((double)(rand() % 10000))/100;
+        points[i].x = ((double)(rand() % 1000))/100;
+        points[i].y = ((double)(rand() % 1000))/100;
         std::cout << points[i].x << "," << points[i].y << ";";
     }
     std::cout << "];\n";
@@ -23,7 +23,7 @@ int main() {
     Welzl::Circle result = welzl.get_circle();
     std::cout << "Center= [" << result.center.x << ", " << result.center.y << "];\n";
     std::cout << "Radius= [" << result.radius << "];\n";
-
+    
     std::cout << "\n\nplot(points(:,1), points(:,2), 'b*')\n"
         "hold on\n"
         "t = 0:0.01 : 2 * pi;\n"
@@ -33,3 +33,4 @@ int main() {
 
     return 0;
 }
+

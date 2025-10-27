@@ -1,4 +1,5 @@
 #include "annealing.h"
+#include <math.h>
 
 Annealing::~Annealing()
 {

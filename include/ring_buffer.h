@@ -101,7 +101,7 @@ namespace ring_buffer
 			if (N)
 			{
 				m_raw_mem = (_T*)malloc((N + aligment - 1) * sizeof(_T));
-				m_buf = (_T*)(((uint8_t*)m_raw_mem) + ((aligment - ((uint32_t)m_raw_mem)) % aligment));
+                m_buf = (_T*)(((uint8_t*)m_raw_mem) + ((aligment - ((uintptr_t)m_raw_mem)) % aligment));
 				memset(m_buf, 0, N * sizeof(_T));
 			}
 		}

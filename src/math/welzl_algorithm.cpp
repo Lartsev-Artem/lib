@@ -33,6 +33,7 @@ void Welzl::welzl_proc(const Point* m_points, uint32_t size)
 	}
 }
 
+
 bool Welzl::is_inside(const Circle& c, const Point& p)
 {
 	return distance(c.center, p) <= c.radius + epsilon;

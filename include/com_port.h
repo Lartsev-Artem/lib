@@ -33,8 +33,9 @@ int main()
 #include <stdio.h>
 #include <windows.h>
 #include <chrono>
+#include <string>
 
-#if 0
+#if 1
 #define log_output(...) do{ printf(__VA_ARGS__);}while(0)
 #else
 #define log_output(...) do{}while(0)
@@ -116,8 +117,16 @@ namespace comm_port
 				comm_close();
 			}
 
-			_port = CreateFile(
-				(LPCSTR)com_name,  // имя открываемого порта.
+			size_t convertedChars = 0;
+			wchar_t wideComPort[100];
+
+			mbstowcs_s(&convertedChars, wideComPort, com_name, 100);
+
+			// Формируем полное имя порта
+			std::wstring fullPortName = L"\\\\.\\" + std::wstring(wideComPort);
+			
+			_port = CreateFileW(
+				(LPCWSTR)fullPortName.c_str(),  // имя открываемого порта.
 				GENERIC_WRITE | GENERIC_READ,  // порт открывается в режиме записи.
 				0,  // коммуникационные порты нельзя делать разделяемыми, поэтому данный параметр должен быть равен 0.
 				NULL,  // задает атрибуты защиты файла, при работе с портами должен быть NULL.
