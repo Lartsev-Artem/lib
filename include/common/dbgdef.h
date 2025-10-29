@@ -3,14 +3,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "macro.h"
 
-#if __GNUC__
-#define LIKELY(x) __builtin_expect(!!(x), 1)
-#define UNLIKELY(x) __builtin_expect(!!(x), 0)
-#else
-#define LIKELY(x) (x)
-#define UNLIKELY(x) (x)
-#endif
 
 #define DPRINTF(...) printf(__VA_ARGS__)
 
@@ -35,6 +29,13 @@
       D_LD;                                                                    \
     }                                                                          \
   } while (0)
+
+
+
+
+#include "assertion.h"
+#define RRHD_ASSERT(...)                                                       \
+  ASSERT_SELECTOR(ASSERT_GET_ARG_COUNT(__VA_ARGS__), __VA_ARGS__)
 
 
 #endif //! DBGDEF_H
