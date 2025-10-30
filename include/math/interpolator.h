@@ -409,92 +409,69 @@ public:
   /**
    * @brief Линейная интерполяция
    */
-  T Linear(const T x, const T y) const
+ T Linear(T x, T y) const
   {
     int idx = floor((x - _left_boundX) / _stepX);
     int idy = floor((y - _left_boundY) / _stepY);
 
-    idx = std::clamp(idx, 0, (int)_sizeX - 1);
-    idy = std::clamp(idy, 0, (int)_sizeY - 1);
+    idx = std::clamp(idx, 0, (int)_sizeX - 2);
+    idy = std::clamp(idy, 0, (int)_sizeY - 2);
 
-    T x0 = _left_boundX + idx * _stepX;
-    T y0 = _left_boundY + idy * _stepY;
+    T dx0 = x - (_left_boundX + idx * _stepX);
+    T dy0 = y - (_left_boundY + idy * _stepY);
+    dx0 /= _stepX;
+    dy0 /= _stepY;
 
     T z0 = _tab[idx * _sizeY + idy];
+    T z1 = _tab[(idx + 1) * _sizeY + idy];
+    T z2 = _tab[idx * _sizeY + idy + 1];
+    T z3 = _tab[(idx + 1) * _sizeY + idy + 1];
 
-    T z1 = z0;
-    if (idx < _sizeX - 1)
-    {
-      z1 = _tab[(idx + 1) * _sizeY + idy];
-    }
-
-    T z2 = z0;
-    if (idy < _sizeY - 1)
-    {
-      z2 = _tab[idx * _sizeY + idy + 1];
-    }
-
-    T a = (z1 - z0) / _stepX;
-    T b = (z2 - z0) / _stepY;
-    T dx = x0 / _stepX;
-    T dy = y0 / _stepY;
-    T c = z0 * (1.0 + dx + dy) - z1 * dx - z2 * dy;
-
-    return a * x + b * y + c;
+    T y1 = z0 + dx0 * (z1 - z0);
+    T y2 = z2 + dx0 * (z3 - z2);
+    return y1 + dy0 * (y2 - y1);
   }
 
   /**
-   * @brief Параболическая интерполяция
-   *  z(x,y) = ax^2 +by^2 + cxy + d
-   * @note  без линейной части!!!! [коэффициенты ... ex+hy - опущены]
+   * @brief Параболическая интерполяция   
    */
-  T Parabolic(const T x, const T y) const
+  T Parabolic(T x, T y) const
   {
     int idx = floor((x - _left_boundX) / _stepX);
     int idy = floor((y - _left_boundY) / _stepY);
 
-    idx = std::clamp(idx, 0, (int)_sizeX - 1);
-    idy = std::clamp(idy, 0, (int)_sizeY - 1);
+    idx = std::clamp(idx, 1, (int)_sizeX - 2);
+    idy = std::clamp(idy, 1, (int)_sizeY - 2);
 
-    T x0 = _left_boundX + idx * _stepX;
-    T y0 = _left_boundY + idy * _stepY;
+    T u = x - (_left_boundX + idx * _stepX);
+    T v = y - (_left_boundY + idy * _stepY);
+    u /= _stepX;
+    v /= _stepY;
 
-    T z0 = _tab[idx * _sizeY + idy];
+    T c0 = 0.5 * u * (u - 1);
+    T c1 = (u - 1) * (u + 1);
+    T c2 = 0.5 * u * (u + 1);
 
-    T z1 = z0;
-    if (idx < _sizeX - 1)
-    {
-      z1 = _tab[(idx + 1) * _sizeY + idy];
-    }
+    T fx0y0 = c0 * _tab[(idx - 1) * _sizeY + idy - 1];
+    T fx1y0 = c1 * _tab[idx * _sizeY + idy - 1];
+    T fx2y0 = c2 * _tab[(idx + 1) * _sizeY + idy - 1];
 
-    T z2 = z0;
-    if (idy < _sizeY - 1)
-    {
-      z2 = _tab[idx * _sizeY + idy + 1];
-    }
+    T fx0y1 = c0 * _tab[(idx - 1) * _sizeY + idy];
+    T fx1y1 = c1 * _tab[idx * _sizeY + idy];
+    T fx2y1 = c2 * _tab[(idx + 1) * _sizeY + idy];
 
-    idx = std::min(idx, (int)_sizeX - 2);
-    idy = std::min(idy, (int)_sizeY - 2);
-    T z3 = _tab[(idx + 1) * _sizeY + idy + 1];
+    T fx0y2 = c0 * _tab[(idx - 1) * _sizeY + idy + 1];
+    T fx1y2 = c1 * _tab[idx * _sizeY + idy + 1];
+    T fx2y2 = c2 * _tab[(idx + 1) * _sizeY + idy + 1];
 
-    T dx = _stepX;
-    T dy = _stepY;
-    T dxy = dx * dy;
-    T x1 = x0 + dx;
-    T y1 = y0 + dy;
-    T y1_2 = y1 * y1;
-    T y0_2 = y0 * y0;
+    T z0 = fx0y0 - fx1y0 + fx2y0;
+    T z1 = fx0y1 - fx1y1 + fx2y1;
+    T z2 = fx0y2 - fx1y2 + fx2y2;
 
-    T a = (-y1 * z0 + y1 * z1 + y0 * z2 - y0 * z3) / (x0 + x1);
-    T b = (-x1 * z0 + x0 * z1 + x1 * z2 - x0 * z3) / (y0 + y1);
-    T c = (z0 - z1 - z2 + z3);
-    T d = (x1 * x1 * (y1_2 * z0 - y0_2 * z2) +
-           x0 * x0 * (-y1_2 * z1 + y0_2 * z3) - c * x0 * x1 * y0 * y1) /
-          ((x0 + x1) * (y0 + y1));
-
-    return (a * x * x + b * y * y + c * x * y + d) / dxy;
+    return 0.5 * v * (v - 1) * z0 - (v - 1) * (v + 1) * z1 +
+           0.5 * v * (v + 1) * z2;
   }
-
+  
   enum e_norm_type
   {
     e_norm_max, // абсолютная норма
