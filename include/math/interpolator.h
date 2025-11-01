@@ -342,9 +342,9 @@ public:
     _right_boundX = bx;
     _stepX = (bx - ax) / (Nx - 1);
 
-    _left_boundY = ax;
-    _right_boundY = bx;
-    _stepY = (bx - ax) / (Nx - 1);
+    _left_boundY = ay;
+    _right_boundY = by;
+    _stepY = (by - ay) / (Ny - 1);
 
     if (_tab)
     {
@@ -530,7 +530,11 @@ public:
         }
         else if (norm_type == e_norm_eps)
         {
-          norm = df / fabs(_func(x, y));
+            T dfe = df / fabs(_func(x, y));
+          if (df > dfe)
+          {
+            norm = dfe;
+          }
         }
         else
         {
