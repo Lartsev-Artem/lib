@@ -12,7 +12,7 @@ if(MSVC)
     add_compile_options("/Zc:__cplusplus")
 endif()
 
-include(${CMAKE_CURRENT_LIST_DIR}/cmake_module/cmake_files.cmake)  # функции cmake 
+include(${CMAKE_CURRENT_LIST_DIR}/cmake_module/cmake_files.cmake)  # пїЅпїЅпїЅпїЅпїЅпїЅпїЅ cmake 
 
 include_directories(
     ${CMAKE_CURRENT_LIST_DIR}/include
@@ -21,6 +21,7 @@ include_directories(
     ${CMAKE_CURRENT_LIST_DIR}/include/io_api
     ${CMAKE_CURRENT_LIST_DIR}/include/math/optimization/evolution
     ${CMAKE_CURRENT_LIST_DIR}/include/math/optimization/annealing
+    ${CMAKE_CURRENT_LIST_DIR}/include/math/integrator
     ${CMAKE_CURRENT_LIST_DIR}/include/audio/
     ${CMAKE_CURRENT_LIST_DIR}/include/audio/compressor
     ${CMAKE_CURRENT_LIST_DIR}/include/math/convex_hull

@@ -406,10 +406,7 @@ public:
     return 0.25 * (z0 + z1 + z2 + z3);
   }
 
-  /**
-   * @brief Линейная интерполяция
-   */
- T Linear(T x, T y) const
+  T BiLinear(T x, T y) const
   {
     int idx = floor((x - _left_boundX) / _stepX);
     int idy = floor((y - _left_boundY) / _stepY);
@@ -432,9 +429,6 @@ public:
     return y1 + dy0 * (y2 - y1);
   }
 
-  /**
-   * @brief Параболическая интерполяция   
-   */
   T Parabolic(T x, T y) const
   {
     int idx = floor((x - _left_boundX) / _stepX);
@@ -471,7 +465,7 @@ public:
     return 0.5 * v * (v - 1) * z0 - (v - 1) * (v + 1) * z1 +
            0.5 * v * (v + 1) * z2;
   }
-  
+
   enum e_norm_type
   {
     e_norm_max, // абсолютная норма
@@ -483,7 +477,7 @@ public:
   {
     e_inter_close,
     e_inter_avg,
-    e_inter_linear,
+    e_inter_bilinear,
     e_inter_parabolic
   };
 
@@ -508,9 +502,9 @@ public:
         {
           df = fabs(_func(x, y) - Parabolic(x, y));
         }
-        else if (type_int == e_inter_linear)
+        else if (type_int == e_inter_bilinear)
         {
-          df = fabs(_func(x, y) - Linear(x, y));
+          df = fabs(_func(x, y) - BiLinear(x, y));
         }
         else if (type_int == e_inter_avg)
         {
@@ -530,7 +524,7 @@ public:
         }
         else if (norm_type == e_norm_eps)
         {
-            T dfe = df / fabs(_func(x, y));
+          T dfe = df / fabs(_func(x, y));
           if (df > dfe)
           {
             norm = dfe;

@@ -13,6 +13,7 @@ include_directories(
     ${CMAKE_CURRENT_LIST_DIR}/include/math/optimization/evolution
     ${CMAKE_CURRENT_LIST_DIR}/include/math/optimization/annealing
     ${CMAKE_CURRENT_LIST_DIR}/include/math/
+    ${CMAKE_CURRENT_LIST_DIR}/include/math/integrator
     ${CMAKE_CURRENT_LIST_DIR}/../include/audio/compressor
     ${CMAKE_CURRENT_LIST_DIR}/../include/math/convex_hull
     ${CMAKE_CURRENT_LIST_DIR}/../include/common
